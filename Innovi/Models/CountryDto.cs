@@ -20,11 +20,8 @@ namespace Innovi.Models
         public string? NameEn { get; set; } = null!;
 
         public string? NameAr { get; set; } = null!;
-        [JsonIgnore]
         public virtual ICollection<MerchantDto>? Merchants { get; set; } = new List<MerchantDto>();
-        [JsonIgnore]
         public virtual ICollection<CityDto>? Cities { get; set; } = new List<CityDto>();
-        [JsonIgnore]
         public virtual ICollection<GovernorateDto>? Governorates { get; set; } = new List<GovernorateDto>();
 
         //public virtual ICollection<RegisteredMerchant> RegisteredMerchants { get; set; } = new List<RegisteredMerchant>();

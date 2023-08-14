@@ -21,6 +21,9 @@ builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+builder.Services.AddScoped<IProductQuantityRepository, ProductQuantityRepository>();
+
 
 
 builder.Services.Configure<FormOptions>(o =>

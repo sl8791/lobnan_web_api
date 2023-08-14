@@ -36,11 +36,8 @@ namespace Innovi.Models
         public string? Email { get; set; } = null!;
         [JsonIgnore]
         public virtual CountryDto? Country { get; set; } = null!;
-        [JsonIgnore]
         public virtual ICollection<ProductDto>? Products { get; set; } = new List<ProductDto>();
-        [JsonIgnore]
         public virtual ICollection<PromotionDto>? Promotions { get; set; } = new List<PromotionDto>();
-        [JsonIgnore]
         public virtual ICollection<BranchDto>? Branches { get; set; } = new List<BranchDto>();
         //public virtual ICollection<StorageDto> Storages { get; set; } = new List<StorageDto>();
         //public virtual ICollection<AspNetUser> AspNetUsers { get; set; } = new List<AspNetUser>();

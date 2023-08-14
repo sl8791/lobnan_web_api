@@ -33,6 +33,12 @@ namespace Innovi.Utils
             CreateMap<Branch, BranchDto>();
             CreateMap<BranchDto, Branch>();
 
+            CreateMap<ProductImage, ProductImageDto>();
+            CreateMap<ProductImageDto, ProductImage>();
+
+            CreateMap<ProductQuantity, ProductQuantityDto>();
+            CreateMap<ProductQuantityDto, ProductQuantity>();
+
         }
     }
 }

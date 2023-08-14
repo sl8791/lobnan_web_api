@@ -69,15 +69,14 @@ namespace Innovi.Models
         public virtual CategoryDto? Category { get; set; } = null!;
         [JsonIgnore]
         public virtual MerchantDto? Merchant { get; set; } = null!;
+        public virtual ICollection<ProductImageDto>? ProductImages { get; set; } = new List<ProductImageDto>();
+        public virtual ICollection<ProductQuantityDto>? ProductQuantities { get; set; } = new List<ProductQuantityDto>();
+
         //public virtual Manufacturer Manufacturer { get; set; } = null!;
 
         //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
         //public virtual ICollection<ProductAttributesValue> ProductAttributesValues { get; set; } = new List<ProductAttributesValue>();
-
-        //public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
-
-        //public virtual ICollection<ProductQuantity> ProductQuantities { get; set; } = new List<ProductQuantity>();
 
         //public virtual ICollection<ProductSpecse> ProductSpecses { get; set; } = new List<ProductSpecse>();
 

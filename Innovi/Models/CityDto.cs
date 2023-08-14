@@ -19,7 +19,6 @@ namespace Innovi.Models
         public virtual CountryDto? Country { get; set; } = null!;
         [JsonIgnore]
         public virtual GovernorateDto? Governorate { get; set; } = null!;
-        [JsonIgnore]
         public virtual ICollection<BranchDto>? Branches { get; set; } = new List<BranchDto>();
         //public virtual ICollection<RegisteredMerchant> RegisteredMerchants { get; set; } = new List<RegisteredMerchant>();
         //public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; } = new List<ShippingAddress>();

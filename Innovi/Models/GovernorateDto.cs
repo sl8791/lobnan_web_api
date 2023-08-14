@@ -23,10 +23,8 @@ namespace Innovi.Models
 
         public int? CountryId { get; set; }
         [JsonIgnore]
-        public virtual ICollection<CityDto>? Cities { get; set; } = new List<CityDto>();
-        [JsonIgnore]
         public virtual CountryDto? Country { get; set; } = null!;
-
+        public virtual ICollection<CityDto>? Cities { get; set; } = new List<CityDto>();
         //public virtual ICollection<RegisteredMerchant> RegisteredMerchants { get; set; } = new List<RegisteredMerchant>();
 
         //public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; } = new List<ShippingAddress>();
