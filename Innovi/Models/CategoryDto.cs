@@ -33,11 +33,13 @@ namespace Innovi.Models
         public virtual CategoryDto? ParentCategory { get; set; }
         [JsonIgnore]
         public virtual ICollection<ProductDto>? Products { get; set; } = new List<ProductDto>();
+        [JsonIgnore]
+        public virtual ICollection<PromotionDto> Promotions { get; set; } = new List<PromotionDto>();
+        [JsonIgnore]
+        public virtual ICollection<SwipeBannerDto> SwipeBanners { get; set; } = new List<SwipeBannerDto>();
         //ToVerif
         //[JsonIgnore]
         //public virtual ICollection<CategoryDto> InverseParentCategory { get; set; } = new List<CategoryDto>();
-        [JsonIgnore]
-        public virtual ICollection<PromotionDto> Promotions { get; set; } = new List<PromotionDto>();
 
 
     }

@@ -15,7 +15,7 @@ namespace Innovi.Services.Repository
             DbSet = dbContext;
             _mapper = mapper;
         }
-        //Get All Category
+        //Get All Products
         public async Task<ICollection<ProductDto>> GetAllAsync()
         {
             try
@@ -82,7 +82,7 @@ namespace Innovi.Services.Repository
             var countListData = new CountListData<ProductDto>(cats, totalCount);
             return countListData;
         }
-        //Get One Category
+        //Get One Product
         public async Task<ProductDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Products.FindAsync(id);

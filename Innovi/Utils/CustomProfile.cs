@@ -15,6 +15,12 @@ namespace Innovi.Utils
             CreateMap<Product, ProductDto>();
             CreateMap<ProductDto, Product>();
 
+            CreateMap<Promotion, PromotionDto>();
+            CreateMap<PromotionDto, Promotion>();
+
+            CreateMap<SwipeBanner, SwipeBannerDto>();
+            CreateMap<SwipeBannerDto, SwipeBanner>();
+
 
         }
     }

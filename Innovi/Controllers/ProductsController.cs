@@ -32,7 +32,7 @@ namespace Innovi.Controllers
                 var products = await _productRepository.GetAllAsync();
                 if (products == null)
                 {
-                    return NotFound("No categories found.");
+                    return NotFound("No Products found.");
                 }
                 return Ok(products);
             }
@@ -50,7 +50,7 @@ namespace Innovi.Controllers
                 var product = await _productRepository.GetByIdAsync(id);
                 if (product == null)
                 {
-                    return NotFound("No categories found.");
+                    return NotFound("No Products found.");
                 }
                 return Ok(product);
             }
@@ -61,14 +61,14 @@ namespace Innovi.Controllers
         }
         // GET: api/Categories/6
         [HttpGet("{CategoryId}/GetByCategoryIdAsync")]
-        public async Task<ActionResult<IEnumerable>> GetByCategoryIdAsync(int CategoryId)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetByCategoryIdAsync(int CategoryId)
         {
             try
             {
                 var products = await _productRepository.GetByCategoryIdAsync(CategoryId);
                 if (products == null)
                 {
-                    return NotFound("No categories found.");
+                    return NotFound("No Products found.");
                 }
                 return Ok(products);
             }
@@ -87,7 +87,7 @@ namespace Innovi.Controllers
                 var filteredProducts = await _productRepository.GetWithPagination(filter);
                 if (filteredProducts == null)
                 {
-                    return NotFound("No categories found.");
+                    return NotFound("No Products found.");
                 }
                 return Ok(filteredProducts);
             }

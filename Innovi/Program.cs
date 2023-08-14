@@ -14,6 +14,8 @@ GlobalConfiguration(builder);
 
 builder.Services.AddScoped<ICategorieRepository, CategoriesRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<ISwipeBannerRepository, SwipeBannerRepository>();
 
 
 builder.Services.Configure<FormOptions>(o =>
