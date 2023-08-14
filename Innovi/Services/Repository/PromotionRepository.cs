@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Innovi.Data;
 using Innovi.Models;
+using Innovi.Models.Filters;
 using Innovi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace Innovi.Services.Repository
             DbSet = dbContext;
             _mapper = mapper;
         }
-        //Get All Category
+        //Get All Promotions
         public async Task<ICollection<PromotionDto>> GetAllAsync()
         {
             try
@@ -82,7 +83,7 @@ namespace Innovi.Services.Repository
             var countListData = new CountListData<PromotionDto>(Proms, totalCount);
             return countListData;
         }
-        //Get One Category
+        //Get One Promotion
         public async Task<PromotionDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Promotions.FindAsync(id);
@@ -94,7 +95,7 @@ namespace Innovi.Services.Repository
             return null;
         }
 
-        //Get Product By CategoryId(fils)
+        //Get Promotion By CategoryId(fils)
         public async Task<ICollection<PromotionDto>> GetByCategoryIdAsync(int CategoryId)
         {
             var productsToFind = await DbSet.Promotions
@@ -103,12 +104,12 @@ namespace Innovi.Services.Repository
             return promotionDto;
         }
 
-        //Get Product By CategoryId(fils)
+        //Get Promotion By MerchantId
         public async Task<ICollection<PromotionDto>> GetByMerchantIdAsync(int merchantId)
         {
-            var productsToFind = await DbSet.Promotions
+            var promotionsToFind = await DbSet.Promotions
                 .Where(p => p.MerchantId == merchantId && !p.IsDeleted).ToListAsync();
-            var promotionDto = _mapper.Map<List<PromotionDto>>(productsToFind);
+            var promotionDto = _mapper.Map<List<PromotionDto>>(promotionsToFind);
             return promotionDto;
         }
     }

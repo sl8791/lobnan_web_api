@@ -10,6 +10,7 @@ using Innovi.Entities;
 using Innovi.Services.Interfaces;
 using Innovi.Services.Repository;
 using Innovi.Models;
+using Innovi.Models.Filters;
 
 namespace Innovi.Controllers
 {

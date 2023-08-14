@@ -16,6 +16,11 @@ builder.Services.AddScoped<ICategorieRepository, CategoriesRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 builder.Services.AddScoped<ISwipeBannerRepository, SwipeBannerRepository>();
+builder.Services.AddScoped<IMerchantRepository, MerchantRepository>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IGovernorateRepository, GovernorateRepository>();
+builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 
 
 builder.Services.Configure<FormOptions>(o =>

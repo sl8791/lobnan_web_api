@@ -21,6 +21,17 @@ namespace Innovi.Utils
             CreateMap<SwipeBanner, SwipeBannerDto>();
             CreateMap<SwipeBannerDto, SwipeBanner>();
 
+            CreateMap<Merchant, MerchantDto>();
+            CreateMap<MerchantDto, Merchant>();
+
+            CreateMap<City, CityDto>();
+            CreateMap<CityDto, City>();
+
+            CreateMap<Governorate, GovernorateDto>();
+            CreateMap<GovernorateDto, Governorate>();
+
+            CreateMap<Branch, BranchDto>();
+            CreateMap<BranchDto, Branch>();
 
         }
     }

@@ -1,6 +1,6 @@
-﻿namespace Innovi.Models
+﻿namespace Innovi.Models.Filters
 {
-    public class PromotionFilterDto: PromotionDto
+    public class BranchFilterDto: BranchDto
     {
         public int PageNumber { get; set; }
         public int ItemsPerPage { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Innovi.Entities;
+using System.Text.Json.Serialization;
 
 namespace Innovi.Models
 {
@@ -66,10 +67,9 @@ namespace Innovi.Models
 
         [JsonIgnore]
         public virtual CategoryDto? Category { get; set; } = null!;
-
+        [JsonIgnore]
+        public virtual MerchantDto? Merchant { get; set; } = null!;
         //public virtual Manufacturer Manufacturer { get; set; } = null!;
-
-        //public virtual Merchant Merchant { get; set; } = null!;
 
         //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 

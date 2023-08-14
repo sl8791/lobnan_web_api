@@ -10,6 +10,7 @@ using Innovi.Entities;
 using Innovi.Services.Interfaces;
 using System.Collections;
 using Innovi.Models;
+using Innovi.Models.Filters;
 
 namespace Innovi.Controllers
 {
@@ -59,7 +60,7 @@ namespace Innovi.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-        // GET: api/Categories/6
+        // GET: api/Products/6/GetByCategoryIdAsync
         [HttpGet("{CategoryId}/GetByCategoryIdAsync")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetByCategoryIdAsync(int CategoryId)
         {
@@ -77,7 +78,25 @@ namespace Innovi.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-        // POST: api/Categories/Pagination
+        // GET: api/Products/6/GetByMerchantId
+        [HttpGet("{MerchantId}/GetByMerchantId")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetByMerchantIdAsync(int MerchantId)
+        {
+            try
+            {
+                var products = await _productRepository.GetByMerchantIdAsync(MerchantId);
+                if (products == null)
+                {
+                    return NotFound("No Products found.");
+                }
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+        // POST: api/Products/Pagination
         [HttpPost]
         [Route("Pagination")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetWithPagination(ProductFilterDto filter)

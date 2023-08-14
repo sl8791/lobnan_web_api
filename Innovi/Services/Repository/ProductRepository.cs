@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Innovi.Data;
 using Innovi.Models;
+using Innovi.Models.Filters;
 using Innovi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -101,6 +102,14 @@ namespace Innovi.Services.Repository
                 .Where(p => p.CategoryId == CategoryId && !p.IsDeleted).ToListAsync();
             var productsDtos = _mapper.Map<List<ProductDto>>(productsToFind);
             return productsDtos;
+        }
+        //Get Product By MerchantId
+        public async Task<ICollection<ProductDto>> GetByMerchantIdAsync(int merchantId)
+        {
+            var productsToFind = await DbSet.Products
+                .Where(p => p.MerchantId == merchantId && !p.IsDeleted).ToListAsync();
+            var productDto = _mapper.Map<List<ProductDto>>(productsToFind);
+            return productDto;
         }
     }
 }

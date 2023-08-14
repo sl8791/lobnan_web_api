@@ -11,6 +11,7 @@ using System.Diagnostics;
 using Innovi.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections;
+using Innovi.Models.Filters;
 
 namespace Innovi.Controllers
 {

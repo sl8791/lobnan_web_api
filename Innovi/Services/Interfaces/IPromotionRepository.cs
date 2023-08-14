@@ -1,4 +1,5 @@
 ﻿using Innovi.Models;
+using Innovi.Models.Filters;
 
 namespace Innovi.Services.Interfaces
 {

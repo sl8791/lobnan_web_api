@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Innovi.Data;
 using AutoMapper;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
-
+using Innovi.Models.Filters;
 
 namespace Innovi.Services.Repository
 {
