@@ -9,6 +9,7 @@ namespace Innovi.Services.Interfaces
         Task<ICollection<ProductDto>> GetAllAsync();
         Task<ICollection<ProductDto>> GetByCategoryIdAsync(int CategoryId);
         Task<ICollection<ProductDto>> GetByMerchantIdAsync(int MerchantId);
+        Task<ICollection<ProductDto>> GetByManufacturerIdAsync(int ManufacturerId);
         Task<CountListData<ProductDto>> GetWithPagination(ProductFilterDto PaginationFiltre);
     }
 }

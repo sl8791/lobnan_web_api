@@ -1,9 +1,8 @@
-﻿using System.Text.Json.Serialization;
-using Innovi.Entities;
+﻿using Innovi.Entities;
 
 namespace Innovi.Models
 {
-    public class MerchantDto
+    public class SupplierDto 
     {
         public int? Id { get; set; }
 
@@ -31,19 +30,6 @@ namespace Innovi.Models
 
         public bool? IsActive { get; set; }
 
-        public int? CountryId { get; set; }
-
-        public string? Email { get; set; } = null!;
-        [JsonIgnore]
-        public virtual CountryDto? Country { get; set; } = null!;
         public virtual ICollection<ProductDto>? Products { get; set; } = new List<ProductDto>();
-        public virtual ICollection<PromotionDto>? Promotions { get; set; } = new List<PromotionDto>();
-        public virtual ICollection<BranchDto>? Branches { get; set; } = new List<BranchDto>();
-        public virtual ICollection<StorageDto> Storages { get; set; } = new List<StorageDto>();
-        public virtual ICollection<AttributeDto> Attributes { get; set; } = new List<AttributeDto>();
-
-        //public virtual ICollection<AspNetUser> AspNetUsers { get; set; } = new List<AspNetUser>();
-
-
     }
 }

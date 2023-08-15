@@ -111,5 +111,13 @@ namespace Innovi.Services.Repository
             var productDto = _mapper.Map<List<ProductDto>>(productsToFind);
             return productDto;
         }
+        //Get Product By ManufacturerId
+        public async Task<ICollection<ProductDto>> GetByManufacturerIdAsync(int manufacturerId)
+        {
+            var productsToFind = await DbSet.Products
+                .Where(p => p.ManufacturerId == manufacturerId && !p.IsDeleted).ToListAsync();
+            var productDto = _mapper.Map<List<ProductDto>>(productsToFind);
+            return productDto;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Innovi.Entities;
 using Innovi.Models;
+using Attribute = Innovi.Entities.Attribute;
 
 namespace Innovi.Utils
 {
@@ -38,6 +39,31 @@ namespace Innovi.Utils
 
             CreateMap<ProductQuantity, ProductQuantityDto>();
             CreateMap<ProductQuantityDto, ProductQuantity>();
+
+            CreateMap<Manufacturer, ManufacturerDto>();
+            CreateMap<ManufacturerDto, Manufacturer>();
+
+            CreateMap<Storage, StorageDto>();
+            CreateMap<StorageDto, Storage>();
+
+            CreateMap<Tag, TagDto>();
+            CreateMap<TagDto, Tag>();
+
+            CreateMap<ProductSpecse, ProductSpecseDto>();
+            CreateMap<ProductSpecseDto, ProductSpecse>();
+
+            CreateMap<Supplier, SupplierDto>();
+            CreateMap<SupplierDto, Supplier>();
+
+            CreateMap<ProductAttributesValue, ProductAttributesValueDto>();
+            CreateMap<ProductAttributesValueDto, ProductAttributesValue>();
+
+            CreateMap<AttributeValue, AttributeValueDto>();
+            CreateMap<AttributeValueDto, AttributeValue>();
+
+            CreateMap<Attribute, AttributeDto>();
+            CreateMap<AttributeDto, Attribute>();
+
 
         }
     }

@@ -96,6 +96,24 @@ namespace Innovi.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+        // GET: api/Products/6/GetByManufacturerId
+        [HttpGet("{ManufacturerId}/GetByManufacturerId")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetByManufacturerIdAsync(int ManufacturerId)
+        {
+            try
+            {
+                var products = await _productRepository.GetByManufacturerIdAsync(ManufacturerId);
+                if (products == null)
+                {
+                    return NotFound("No Products found.");
+                }
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
         // POST: api/Products/Pagination
         [HttpPost]
         [Route("Pagination")]

@@ -39,7 +39,7 @@ namespace Innovi.Models
         [JsonIgnore]
         public virtual MerchantDto? Merchant { get; set; } = null!;
 
-        //public virtual ICollection<ProductQuantity> ProductQuantities { get; set; } = new List<ProductQuantity>();
+        public virtual ICollection<ProductQuantityDto> ProductQuantities { get; set; } = new List<ProductQuantityDto>();
 
         //public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; } = new List<ShoppingCart>();
     }

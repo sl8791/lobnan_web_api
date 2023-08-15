@@ -69,24 +69,29 @@ namespace Innovi.Models
         public virtual CategoryDto? Category { get; set; } = null!;
         [JsonIgnore]
         public virtual MerchantDto? Merchant { get; set; } = null!;
+        [JsonIgnore]
+        public virtual ManufacturerDto? Manufacturer { get; set; } = null!;
+        [JsonIgnore]
+        public virtual StorageDto Storage { get; set; } = null!;
+        [JsonIgnore]
+        public virtual SupplierDto Supplier { get; set; } = null!;
         public virtual ICollection<ProductImageDto>? ProductImages { get; set; } = new List<ProductImageDto>();
+
         public virtual ICollection<ProductQuantityDto>? ProductQuantities { get; set; } = new List<ProductQuantityDto>();
 
-        //public virtual Manufacturer Manufacturer { get; set; } = null!;
+        public virtual ICollection<TagDto> Tags { get; set; } = new List<TagDto>();
+
+        public virtual ICollection<ProductSpecseDto> ProductSpecses { get; set; } = new List<ProductSpecseDto>();
+
+        public virtual ICollection<ProductAttributesValueDto> ProductAttributesValues { get; set; } = new List<ProductAttributesValueDto>();
 
         //public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
-        //public virtual ICollection<ProductAttributesValue> ProductAttributesValues { get; set; } = new List<ProductAttributesValue>();
-
-        //public virtual ICollection<ProductSpecse> ProductSpecses { get; set; } = new List<ProductSpecse>();
-
         //public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; } = new List<ShoppingCart>();
 
-        //public virtual Storage Storage { get; set; } = null!;
 
-        //public virtual Supplier Supplier { get; set; } = null!;
 
-        //public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
 
     }
 }
