@@ -46,7 +46,7 @@ namespace Innovi.Services.Repository
         public async Task<StorageDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Storages.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var storageDto = _mapper.Map<StorageDto>(entityToFind);
                 return storageDto;
@@ -63,27 +63,38 @@ namespace Innovi.Services.Repository
             return storageDto;
         }
         //Filter With Pagination
-        public async Task<CountListData<StorageDto>> GetWithPagination(StorageFilterDto PaginationFiltre)
+        public async Task<CountListData<StorageDto>> GetWithPagination(StorageFilterDto PaginationFilter)
         {
             var StoragesByPage = await DbSet.Storages.Where(p => p.IsDeleted == false).ToListAsync();
             var Storages = StoragesByPage.ToList();
 
-            if (PaginationFiltre.MerchantId != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("MerchantId", PaginationFilter.MerchantId);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Storages = Storages.Where(c => c.MerchantId == PaginationFiltre.MerchantId).ToList();
+                switch (item.Key)
+                {
+                    case "CountryId":
+                        if (item.Value != null)
+                            Storages = Storages.Where(c => c.MerchantId == int.Parse(PaginationFilter.MerchantId)).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Storages = Storages.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Storages = Storages.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Storages = Storages.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Storages = Storages.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Storages.CountAsync();
-            Storages = Storages.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Storages = Storages.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<StorageDto> cats = new List<StorageDto>();
             foreach (var item in Storages)
             {

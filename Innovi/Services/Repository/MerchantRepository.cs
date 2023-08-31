@@ -42,31 +42,42 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<MerchantDto>> GetWithPagination(MerchantFilterDto PaginationFiltre)
+        public async Task<CountListData<MerchantDto>> GetWithPagination(MerchantFilterDto PaginationFilter)
         {
             var MerchantByPage = await DbSet.Merchants.Where(p => p.IsDeleted == false).ToListAsync();
             var Merchants = MerchantByPage.ToList();
-
-            if (PaginationFiltre.Email != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("CountryId", PaginationFilter.CountryId);
+            dic.Add("Email", PaginationFilter.Email);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Merchants = Merchants.Where(c => c.Email.ToUpper() == PaginationFiltre.Email.ToUpper()).ToList();
+                switch (item.Key)
+                {
+                    case "CountryId":
+                        if (item.Value != null)
+                            Merchants = Merchants.Where(c => c.CountryId == int.Parse(PaginationFilter.CountryId)).ToList();
+                        break;
+                    case "Email":
+                        if (item.Value != null)
+                            Merchants = Merchants.Where(c => c.Email.ToUpper() == PaginationFilter.Email.ToUpper()).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Merchants = Merchants.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Merchants = Merchants.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.CountryId != null)
-            {
-                Merchants = Merchants.Where(c => c.CountryId == PaginationFiltre.CountryId).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Merchants = Merchants.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Merchants = Merchants.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Merchants.CountAsync();
-            Merchants = Merchants.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Merchants = Merchants.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<MerchantDto> cats = new List<MerchantDto>();
             foreach (var item in Merchants)
             {
@@ -83,7 +94,7 @@ namespace Innovi.Services.Repository
         public async Task<MerchantDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Merchants.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var MerchantDto = _mapper.Map<MerchantDto>(entityToFind);
                 return MerchantDto;

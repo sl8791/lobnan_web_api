@@ -83,7 +83,7 @@ namespace Innovi.Controllers
         // POST: api/AttributeValues/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<AttributeValueDto>>> GetWithPagination(AttributeValueFilterDto filter)
+        public async Task<ActionResult<IEnumerable<AttributeValueDto>>> GetWithPagination([FromQuery] AttributeValueFilterDto filter)
         {
             try
             {

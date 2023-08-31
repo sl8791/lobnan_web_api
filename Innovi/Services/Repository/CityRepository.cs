@@ -41,28 +41,40 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<CityDto>> GetWithPagination(CityFilterDto PaginationFiltre)
+        public async Task<CountListData<CityDto>> GetWithPagination(CityFilterDto PaginationFilter)
         {
-            var CountryByPage = await DbSet.Cities.Where(p => p.IsDeleted == false).ToListAsync();
-            var Countrys = CountryByPage.ToList();
-            if (PaginationFiltre.CountryId != null)
-            {
-                Countrys = Countrys.Where(c => c.CountryId == PaginationFiltre.CountryId).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Countrys = Countrys.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Countrys = Countrys.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
+            var CitieByPage = await DbSet.Cities.Where(p => p.IsDeleted == false).ToListAsync();
+            var Cities = CitieByPage.ToList();
 
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("CountryId", PaginationFilter.CountryId);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
+            {
+                switch (item.Key)
+                {
+                    case "CountryId":
+                        if (item.Value != null)
+                            Cities = Cities.Where(c => c.CountryId == int.Parse(PaginationFilter.CountryId)).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Cities = Cities.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Cities = Cities.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }        
             int totalCount = await DbSet.Cities.CountAsync();
-            Countrys = Countrys.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Cities = Cities.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<CityDto> cats = new List<CityDto>();
-            foreach (var item in Countrys)
+            foreach (var item in Cities)
             {
                 cats.Add(_mapper.Map<CityDto>(item));
             }
@@ -77,7 +89,7 @@ namespace Innovi.Services.Repository
         public async Task<CityDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Cities.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var cityDto = _mapper.Map<CityDto>(entityToFind);
                 return cityDto;

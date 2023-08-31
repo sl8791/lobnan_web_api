@@ -64,7 +64,7 @@ namespace Innovi.Controllers
         // POST: api/Manufacturers/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<ManufacturerDto>>> GetWithPagination(ManufacturerFilterDto filter)
+        public async Task<ActionResult<IEnumerable<ManufacturerDto>>> GetWithPagination([FromQuery] ManufacturerFilterDto filter)
         {
             try
             {

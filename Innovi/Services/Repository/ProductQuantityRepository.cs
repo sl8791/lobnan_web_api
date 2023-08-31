@@ -46,7 +46,7 @@ namespace Innovi.Services.Repository
         public async Task<ProductQuantityDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.ProductQuantities.FindAsync(id);
-            if (entityToFind != null)
+            if (entityToFind != null && entityToFind != null)
             {
                 var ProductQuantityDto = _mapper.Map<ProductQuantityDto>(entityToFind);
                 return ProductQuantityDto;

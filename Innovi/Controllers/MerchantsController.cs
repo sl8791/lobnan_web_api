@@ -80,14 +80,14 @@ namespace Innovi.Controllers
         // POST: api/Merchants/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<MerchantDto>>> GetWithPagination(MerchantFilterDto filter)
+        public async Task<ActionResult<IEnumerable<MerchantDto>>> GetWithPagination([FromQuery] MerchantFilterDto filter)
         {
             try
             {
                 var filteredMerchants = await _merchantRepository.GetWithPagination(filter);
                 if (filteredMerchants == null)
                 {
-                    return NotFound("No Products found.");
+                    return NotFound("No Merchants found.");
                 }
                 return Ok(filteredMerchants);
             }

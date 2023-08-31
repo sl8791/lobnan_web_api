@@ -43,35 +43,48 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<ProductSpecseDto>> GetWithPagination(ProductSpecseFilterDto PaginationFiltre)
+        public async Task<CountListData<ProductSpecseDto>> GetWithPagination(ProductSpecseFilterDto PaginationFilter)
         {
             var ProductByPage = await DbSet.ProductSpecses.Where(p => p.IsDeleted == false).ToListAsync();
             var Products = ProductByPage.ToList();
 
-            if (PaginationFiltre.ProductId != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("ProductId", PaginationFilter.ProductId);
+            dic.Add("ValueAr", PaginationFilter.ValueAr);
+            dic.Add("ValueEn", PaginationFilter.ValueEn);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            foreach (var item in dic)
             {
-                Products = Products.Where(c => c.ProductId == PaginationFiltre.ProductId).ToList();
+                switch (item.Key)
+                {
+                    case "ProductId":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ProductId == int.Parse(PaginationFilter.ProductId)).ToList();
+                        break;
+                    case "ValueAr":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ValueAr.ToUpper() == PaginationFilter.ValueAr.ToUpper()).ToList();
+                        break;
+                    case "ValueEn":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ValueEn.ToUpper() == PaginationFilter.ValueEn.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.ValueAr != null)
-            {
-                Products = Products.Where(c => c.ValueAr.ToUpper() == PaginationFiltre.ValueAr.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.ValueEn != null)
-            {
-                Products = Products.Where(c => c.ValueEn.ToUpper() == PaginationFiltre.ValueEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Products = Products.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Products = Products.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.ProductSpecses.CountAsync();
-            Products = Products.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Products = Products.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<ProductSpecseDto> cats = new List<ProductSpecseDto>();
             foreach (var item in Products)
             {
@@ -88,7 +101,7 @@ namespace Innovi.Services.Repository
         public async Task<ProductSpecseDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.ProductSpecses.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var ProductSpecseDto = _mapper.Map<ProductSpecseDto>(entityToFind);
                 return ProductSpecseDto;

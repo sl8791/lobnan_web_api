@@ -47,7 +47,7 @@ namespace Innovi.Services.Repository
         public async Task<ProductImageDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.ProductImages.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var ProductImageDto = _mapper.Map<ProductImageDto>(entityToFind);
                 return ProductImageDto;

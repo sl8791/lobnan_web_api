@@ -98,7 +98,7 @@ namespace Innovi.Controllers
         // POST: api/Promotions/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<PromotionDto>>> GetWithPagination(PromotionFilterDto filter)
+        public async Task<ActionResult<IEnumerable<PromotionDto>>> GetWithPagination([FromQuery] PromotionFilterDto filter)
         {
             try
             {

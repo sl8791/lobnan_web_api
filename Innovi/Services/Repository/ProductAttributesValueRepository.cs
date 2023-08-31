@@ -46,7 +46,7 @@ namespace Innovi.Services.Repository
         {
             var entityToFind = await DbSet.ProductAttributesValues
                 .Where(p => p.ProductId == productId && p.AttributeValueId == attributeValueId && p.AttributeId == attributeId)
-                .ToListAsync();
+                .FirstOrDefaultAsync();
             if (entityToFind != null)
             {
                 var productAttributesValueDto = _mapper.Map<ProductAttributesValueDto>(entityToFind);

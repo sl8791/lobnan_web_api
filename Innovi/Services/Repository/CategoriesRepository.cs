@@ -5,6 +5,8 @@ using Innovi.Data;
 using AutoMapper;
 using EntityState = Microsoft.EntityFrameworkCore.EntityState;
 using Innovi.Models.Filters;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System;
 
 namespace Innovi.Services.Repository
 {
@@ -158,30 +160,42 @@ namespace Innovi.Services.Repository
             return null;
         }
         //Filter With Pagination
-        public async Task<CountListData<CategoryDto>> GetWithPagination(CategoryFilterDto PaginationFiltre)
+        public async Task<CountListData<CategoryDto>> GetWithPagination(CategoryFilterDto PaginationFilter)
         {
             var categoriesByPage = await DbSet.Categories.Where(categ => categ.IsDeleted == false).ToListAsync();
             var categories = categoriesByPage.ToList();
 
-            if (PaginationFiltre.Code != null)
-            {
-                categories = categories.Where(c => c.Code.ToUpper() == PaginationFiltre.Code.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                categories = categories.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                categories = categories.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("Code", PaginationFilter.Code);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
 
-            int totalCount = await DbSet.Categories.CountAsync();
-            categories = categories.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
-            List<CategoryDto> cats = new List<CategoryDto>();
-            foreach (var item in categories)
+            foreach (var item in dic)
             {
+                switch (item.Key)
+                {
+                    case "Code":
+                        if(item.Value != null)
+                            categories = categories.Where(c => c.Code.ToUpper() == PaginationFilter.Code.ToUpper()).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            categories = categories.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            categories = categories.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+                int totalCount = await DbSet.Categories.CountAsync();
+                categories = categories.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                          .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+                List<CategoryDto> cats = new List<CategoryDto>();
+                foreach (var item in categories)
+                {
                     CategoryDto c = new CategoryDto();
                     c = _mapper.Map<CategoryDto>(item);
                     if (item.ParentCategoryId != null)
@@ -189,21 +203,21 @@ namespace Innovi.Services.Repository
                         var a = await GetByIdAsync((int)c.ParentCategoryId);
                         c.ParentCategory = a;
                     }
-                    cats.Add(c);   
-            }
-            if (cats.Count == 0)
-            {
-                return null;
-            }
-            var countListData = new CountListData<CategoryDto>(cats, totalCount);
-            return countListData;
+                    cats.Add(c);
+                }
+                if (cats.Count == 0)
+                {
+                    return null;
+                }
+                var countListData = new CountListData<CategoryDto>(cats, totalCount);
+                return countListData;
         }
 
         //Get One Category
         public async Task<CategoryDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Categories.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 if (entityToFind.ParentCategoryId != null)
                 {

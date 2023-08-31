@@ -42,22 +42,32 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<CountryDto>> GetWithPagination(CountryFilterDto PaginationFiltre)
+        public async Task<CountListData<CountryDto>> GetWithPagination(CountryFilterDto PaginationFilter)
         {
             var CountryByPage = await DbSet.Countries.Where(p => p.IsDeleted == false).ToListAsync();
             var Countrys = CountryByPage.ToList();
-            if (PaginationFiltre.NameEn != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Countrys = Countrys.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Countrys = Countrys.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
+                switch (item.Key)
+                {
+                    case "NameAr":
+                        if (item.Value != null)
+                            Countrys = Countrys.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Countrys = Countrys.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }          
             int totalCount = await DbSet.Countries.CountAsync();
-            Countrys = Countrys.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Countrys = Countrys.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<CountryDto> cats = new List<CountryDto>();
             foreach (var item in Countrys)
             {
@@ -74,7 +84,7 @@ namespace Innovi.Services.Repository
         public async Task<CountryDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Countries.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var CountryDto = _mapper.Map<CountryDto>(entityToFind);
                 return CountryDto;

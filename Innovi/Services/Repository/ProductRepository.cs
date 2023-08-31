@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Innovi.Data;
+using Innovi.Entities;
 using Innovi.Models;
 using Innovi.Models.Filters;
 using Innovi.Services.Interfaces;
@@ -42,35 +43,48 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<ProductDto>> GetWithPagination(ProductFilterDto PaginationFiltre)
+        public async Task<CountListData<ProductDto>> GetWithPagination(ProductFilterDto PaginationFilter)
         {
             var ProductByPage = await DbSet.Products.Where(p => p.IsDeleted == false).ToListAsync();
             var Products = ProductByPage.ToList();
 
-            if (PaginationFiltre.ProductCode != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("ProductCode", PaginationFilter.ProductCode);
+            dic.Add("Price", PaginationFilter.Price);
+            dic.Add("CategoryId", PaginationFilter.CategoryId);
+            dic.Add("ProductNameEn", PaginationFilter.ProductNameEn);
+            dic.Add("ProductNameAr", PaginationFilter.ProductNameAr);
+            foreach (var item in dic)
             {
-                Products = Products.Where(c => c.ProductCode.ToUpper() == PaginationFiltre.ProductCode.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.Price != null)
-            {
-                Products = Products.Where(c => c.Price == PaginationFiltre.Price).ToList();
-            }
-            if (PaginationFiltre.CategoryId != null)
-            {
-                Products = Products.Where(c => c.CategoryId == PaginationFiltre.CategoryId).ToList();
-            }
-            if (PaginationFiltre.ProductNameEn != null)
-            {
-                Products = Products.Where(c => c.ProductNameEn.ToUpper() == PaginationFiltre.ProductNameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.ProductNameAr != null)
-            {
-                Products = Products.Where(c => c.ProductNameAr.ToUpper() == PaginationFiltre.ProductNameAr.ToUpper()).ToList();
-            }
-
+                switch (item.Key)
+                {
+                    case "ProductCode":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ProductCode.ToUpper() == PaginationFilter.ProductCode.ToUpper()).ToList();
+                        break;
+                    case "Price":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.Price == int.Parse(PaginationFilter.Price)).ToList();
+                        break;
+                    case "CategoryId":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.CategoryId == int.Parse(PaginationFilter.CategoryId)).ToList();
+                        break;
+                    case "ProductNameEn":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ProductNameEn.ToUpper() == PaginationFilter.ProductNameEn.ToUpper()).ToList();
+                        break;
+                    case "ProductNameAr":
+                        if (item.Value != null)
+                            Products = Products.Where(c => c.ProductNameAr.ToUpper() == PaginationFilter.ProductNameAr.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }         
             int totalCount = await DbSet.Products.CountAsync();
-            Products = Products.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Products = Products.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<ProductDto> cats = new List<ProductDto>();
             foreach (var item in Products)
             {
@@ -87,7 +101,7 @@ namespace Innovi.Services.Repository
         public async Task<ProductDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Products.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var productDto = _mapper.Map<ProductDto>(entityToFind);
                 return productDto;

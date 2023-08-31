@@ -44,7 +44,7 @@ namespace Innovi.Services.Repository
         public async Task<SwipeBannerDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.SwipeBanners.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var swipeBannerDto = _mapper.Map<SwipeBannerDto>(entityToFind);
                 return swipeBannerDto;

@@ -83,7 +83,7 @@ namespace Innovi.Controllers
         // POST: api/Storages/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<StorageDto>>> GetWithPagination(StorageFilterDto filter)
+        public async Task<ActionResult<IEnumerable<StorageDto>>> GetWithPagination([FromQuery] StorageFilterDto filter)
         {
             try
             {

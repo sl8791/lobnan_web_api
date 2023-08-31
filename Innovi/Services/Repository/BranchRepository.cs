@@ -4,6 +4,7 @@ using Innovi.Models.Filters;
 using Innovi.Models;
 using Innovi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Innovi.Entities;
 
 
 namespace Innovi.Services.Repository
@@ -43,31 +44,42 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<BranchDto>> GetWithPagination(BranchFilterDto PaginationFiltre)
+        public async Task<CountListData<BranchDto>> GetWithPagination(BranchFilterDto PaginationFilter)
         {
             var BranchByPage = await DbSet.Branches.Where(p => p.IsDeleted == false).ToListAsync();
             var Branchs = BranchByPage.ToList();
-
-            if (PaginationFiltre.CityId != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("CityId", PaginationFilter.CityId);
+            dic.Add("MerchantId", PaginationFilter.MerchantId);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Branchs = Branchs.Where(c => c.CityId == PaginationFiltre.CityId).ToList();
+                switch (item.Key)
+                {
+                    case "CityId":
+                        if (item.Value != null)
+                            Branchs = Branchs.Where(c => c.CityId == int.Parse(PaginationFilter.CityId)).ToList();
+                        break;
+                    case "MerchantId":
+                        if (item.Value != null)
+                            Branchs = Branchs.Where(c => c.MerchantId == int.Parse(PaginationFilter.MerchantId)).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Branchs = Branchs.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Branchs = Branchs.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.MerchantId != null)
-            {
-                Branchs = Branchs.Where(c => c.MerchantId == PaginationFiltre.MerchantId).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Branchs = Branchs.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Branchs = Branchs.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
-            int totalCount = await DbSet.Branches.CountAsync();
-            Branchs = Branchs.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+           int totalCount = await DbSet.Branches.CountAsync();
+            Branchs = Branchs.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<BranchDto> cats = new List<BranchDto>();
             foreach (var item in Branchs)
             {
@@ -84,7 +96,7 @@ namespace Innovi.Services.Repository
         public async Task<BranchDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Branches.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var branchDto = _mapper.Map<BranchDto>(entityToFind);
                 return branchDto;

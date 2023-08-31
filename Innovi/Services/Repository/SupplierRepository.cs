@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Innovi.Data;
+using Innovi.Entities;
 using Innovi.Models;
 using Innovi.Models.Filters;
 using Innovi.Services.Interfaces;
@@ -45,7 +46,7 @@ namespace Innovi.Services.Repository
         public async Task<SupplierDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Suppliers.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var supplierDto = _mapper.Map<SupplierDto>(entityToFind);
                 return supplierDto;
@@ -53,31 +54,43 @@ namespace Innovi.Services.Repository
             return null;
         }
         //Filter With Pagination
-        public async Task<CountListData<SupplierDto>> GetWithPagination(SupplierFilterDto PaginationFiltre)
+        public async Task<CountListData<SupplierDto>> GetWithPagination(SupplierFilterDto PaginationFilter)
         {
             var SupplierByPage = await DbSet.Suppliers.Where(p => p.IsDeleted == false).ToListAsync();
             var Suppliers = SupplierByPage.ToList();
 
-            if (PaginationFiltre.AddressEn != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("AddressEn", PaginationFilter.AddressEn);
+            dic.Add("AddressAr", PaginationFilter.AddressAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            foreach (var item in dic)
             {
-                Suppliers = Suppliers.Where(c => c.AddressEn.ToUpper() == PaginationFiltre.AddressEn.ToUpper()).ToList();
+                switch (item.Key)
+                {
+                    case "AddressEn":
+                        if (item.Value != null)
+                            Suppliers = Suppliers.Where(c => c.AddressEn.ToUpper() == PaginationFilter.AddressEn.ToUpper()).ToList();
+                        break;
+                    case "AddressAr":
+                        if (item.Value != null)
+                            Suppliers = Suppliers.Where(c => c.AddressAr.ToUpper() == PaginationFilter.AddressAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Suppliers = Suppliers.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Suppliers = Suppliers.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;                   
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.AddressAr != null)
-            {
-                Suppliers = Suppliers.Where(c => c.AddressAr.ToUpper() == PaginationFiltre.AddressAr.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Suppliers = Suppliers.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Suppliers = Suppliers.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Suppliers.CountAsync();
-            Suppliers = Suppliers.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Suppliers = Suppliers.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<SupplierDto> cats = new List<SupplierDto>();
             foreach (var item in Suppliers)
             {

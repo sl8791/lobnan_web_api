@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Innovi.Data;
+using Innovi.Entities;
 using Innovi.Models;
 using Innovi.Models.Filters;
 using Innovi.Services.Interfaces;
@@ -42,35 +43,48 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<PromotionDto>> GetWithPagination(PromotionFilterDto PaginationFiltre)
+        public async Task<CountListData<PromotionDto>> GetWithPagination(PromotionFilterDto PaginationFilter)
         {
             var PromoByPage = await DbSet.Promotions.Where(p => p.IsDeleted == false).ToListAsync();
             var Promotions = PromoByPage.ToList();
 
-            if (PaginationFiltre.PromotionCode != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("PromotionCode", PaginationFilter.PromotionCode);
+            dic.Add("DiscountType", PaginationFilter.DiscountType);
+            dic.Add("CategoryId", PaginationFilter.CategoryId);
+            dic.Add("PromotionNameEn", PaginationFilter.PromotionNameEn);
+            dic.Add("PromotionNameAr", PaginationFilter.PromotionNameAr);
+            foreach (var item in dic)
             {
-                Promotions = Promotions.Where(c => c.PromotionCode.ToUpper() == PaginationFiltre.PromotionCode.ToUpper()).ToList();
+                switch (item.Key)
+                {
+                    case "PromotionCode":
+                        if (item.Value != null)
+                            Promotions = Promotions.Where(c => c.PromotionCode.ToUpper() == PaginationFilter.PromotionCode.ToUpper()).ToList();
+                        break;
+                    case "DiscountType":
+                        if (item.Value != null)
+                            Promotions = Promotions.Where(c => c.DiscountType == int.Parse(PaginationFilter.DiscountType)).ToList();
+                        break;
+                    case "CategoryId":
+                        if (item.Value != null)
+                            Promotions = Promotions.Where(c => c.CategoryId == int.Parse(PaginationFilter.CategoryId)).ToList();
+                        break;
+                    case "PromotionNameEn":
+                        if (item.Value != null)
+                            Promotions = Promotions.Where(c => c.PromotionNameEn.ToUpper() == PaginationFilter.PromotionNameEn.ToUpper()).ToList();
+                        break;
+                    case "PromotionNameAr":
+                        if (item.Value != null)
+                            Promotions = Promotions.Where(c => c.PromotionNameAr.ToUpper() == PaginationFilter.PromotionNameAr.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.DiscountType != null)
-            {
-                Promotions = Promotions.Where(c => c.DiscountType == PaginationFiltre.DiscountType).ToList();
-            }
-            if (PaginationFiltre.CategoryId != null)
-            {
-                Promotions = Promotions.Where(c => c.CategoryId == PaginationFiltre.CategoryId).ToList();
-            }
-            if (PaginationFiltre.PromotionNameEn != null)
-            {
-                Promotions = Promotions.Where(c => c.PromotionNameEn.ToUpper() == PaginationFiltre.PromotionNameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.PromotionNameAr != null)
-            {
-                Promotions = Promotions.Where(c => c.PromotionNameAr.ToUpper() == PaginationFiltre.PromotionNameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Promotions.CountAsync();
-            Promotions = Promotions.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Promotions = Promotions.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<PromotionDto> Proms = new List<PromotionDto>();
             foreach (var item in Promotions)
             {
@@ -87,7 +101,7 @@ namespace Innovi.Services.Repository
         public async Task<PromotionDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Promotions.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var promotionDto = _mapper.Map<PromotionDto>(entityToFind);
                 return promotionDto;

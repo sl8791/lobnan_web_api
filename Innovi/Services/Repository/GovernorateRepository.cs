@@ -43,28 +43,39 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<GovernorateDto>> GetWithPagination(GovernorateFilterDto PaginationFiltre)
+        public async Task<CountListData<GovernorateDto>> GetWithPagination(GovernorateFilterDto PaginationFilter)
         {
-            var CountryByPage = await DbSet.Governorates.Where(p => p.IsDeleted == false).ToListAsync();
-            var Countrys = CountryByPage.ToList();
-            if (PaginationFiltre.CountryId != null)
+            var GovernorateByPage = await DbSet.Governorates.Where(p => p.IsDeleted == false).ToListAsync();
+            var Governorates = GovernorateByPage.ToList();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("CountryId", PaginationFilter.CountryId);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Countrys = Countrys.Where(c => c.CountryId == PaginationFiltre.CountryId).ToList();
+                switch (item.Key)
+                {
+                    case "CountryId":
+                        if (item.Value != null)
+                            Governorates = Governorates.Where(c => c.CountryId == int.Parse(PaginationFilter.CountryId)).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Governorates = Governorates.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Governorates = Governorates.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Countrys = Countrys.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Countrys = Countrys.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Governorates.CountAsync();
-            Countrys = Countrys.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Governorates = Governorates.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<GovernorateDto> cats = new List<GovernorateDto>();
-            foreach (var item in Countrys)
+            foreach (var item in Governorates)
             {
                 cats.Add(_mapper.Map<GovernorateDto>(item));
             }
@@ -79,7 +90,7 @@ namespace Innovi.Services.Repository
         public async Task<GovernorateDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Governorates.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var GovernorateDto = _mapper.Map<GovernorateDto>(entityToFind);
                 return GovernorateDto;

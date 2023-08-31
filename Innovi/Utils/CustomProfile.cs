@@ -64,6 +64,9 @@ namespace Innovi.Utils
             CreateMap<Attribute, AttributeDto>();
             CreateMap<AttributeDto, Attribute>();
 
+            CreateMap<Country, CountryDto>();
+            CreateMap<CountryDto, Country>();
+
 
         }
     }

@@ -4,6 +4,7 @@ using Innovi.Models.Filters;
 using Innovi.Models;
 using Innovi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Innovi.Services.Repository
 {
@@ -45,7 +46,7 @@ namespace Innovi.Services.Repository
         public async Task<AttributeDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Attributes.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var AttributeDto = _mapper.Map<AttributeDto>(entityToFind);
                 return AttributeDto;
@@ -61,27 +62,38 @@ namespace Innovi.Services.Repository
             return AttributeDto;
         }
         //Filter With Pagination
-        public async Task<CountListData<AttributeDto>> GetWithPagination(AttributeFilterDto PaginationFiltre)
+        public async Task<CountListData<AttributeDto>> GetWithPagination(AttributeFilterDto PaginationFilter)
         {
             var AttributeByPage = await DbSet.Attributes.Where(p => p.IsDeleted == false).ToListAsync();
             var Attributes = AttributeByPage.ToList();
 
-            if (PaginationFiltre.MerchantId != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("MerchantId", PaginationFilter.MerchantId);
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Attributes = Attributes.Where(c => c.MerchantId == PaginationFiltre.MerchantId).ToList();
+                switch (item.Key)
+                {
+                    case "MerchantId":
+                        if (item.Value != null)
+                            Attributes = Attributes.Where(c => c.MerchantId == int.Parse(PaginationFilter.MerchantId)).ToList();
+                        break;
+                    case "NameAr":
+                        if (item.Value != null)
+                            Attributes = Attributes.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Attributes = Attributes.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.NameEn != null)
-            {
-                Attributes = Attributes.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
-            }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Attributes = Attributes.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Attributes.CountAsync();
-            Attributes = Attributes.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Attributes = Attributes.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<AttributeDto> cats = new List<AttributeDto>();
             foreach (var item in Attributes)
             {

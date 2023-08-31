@@ -4,6 +4,7 @@ using Innovi.Models.Filters;
 using Innovi.Models;
 using Innovi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Innovi.Entities;
 
 
 namespace Innovi.Services.Repository
@@ -43,22 +44,32 @@ namespace Innovi.Services.Repository
             }
         }
         //Filter With Pagination
-        public async Task<CountListData<ManufacturerDto>> GetWithPagination(ManufacturerFilterDto PaginationFiltre)
+        public async Task<CountListData<ManufacturerDto>> GetWithPagination(ManufacturerFilterDto PaginationFilter)
         {
             var ManufacturerByPage = await DbSet.Manufacturers.Where(p => p.IsDeleted == false).ToListAsync();
             var Manufacturers = ManufacturerByPage.ToList();
-            if (PaginationFiltre.NameEn != null)
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("NameAr", PaginationFilter.NameAr);
+            dic.Add("NameEn", PaginationFilter.NameEn);
+            foreach (var item in dic)
             {
-                Manufacturers = Manufacturers.Where(c => c.NameEn.ToUpper() == PaginationFiltre.NameEn.ToUpper()).ToList();
+                switch (item.Key)
+                {
+                    case "NameAr":
+                        if (item.Value != null)
+                            Manufacturers = Manufacturers.Where(c => c.NameAr.ToUpper() == PaginationFilter.NameAr.ToUpper()).ToList();
+                        break;
+                    case "NameEn":
+                        if (item.Value != null)
+                            Manufacturers = Manufacturers.Where(c => c.NameEn.ToUpper() == PaginationFilter.NameEn.ToUpper()).ToList();
+                        break;
+                    default:
+                        break;
+                }
             }
-            if (PaginationFiltre.NameAr != null)
-            {
-                Manufacturers = Manufacturers.Where(c => c.NameAr.ToUpper() == PaginationFiltre.NameAr.ToUpper()).ToList();
-            }
-
             int totalCount = await DbSet.Manufacturers.CountAsync();
-            Manufacturers = Manufacturers.Skip(PaginationFiltre.ItemsPerPage * (PaginationFiltre.PageNumber - 1))
-                                      .Take(PaginationFiltre.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
+            Manufacturers = Manufacturers.Skip(PaginationFilter.ItemsPerPage * (PaginationFilter.PageNumber - 1))
+                                      .Take(PaginationFilter.ItemsPerPage).OrderByDescending(r => r.CreatedOn).ToList();
             List<ManufacturerDto> cats = new List<ManufacturerDto>();
             foreach (var item in Manufacturers)
             {
@@ -75,7 +86,7 @@ namespace Innovi.Services.Repository
         public async Task<ManufacturerDto> GetByIdAsync(int id)
         {
             var entityToFind = await DbSet.Manufacturers.FindAsync(id);
-            if (!entityToFind.IsDeleted)
+            if (entityToFind != null && !entityToFind.IsDeleted)
             {
                 var manufacturerDto = _mapper.Map<ManufacturerDto>(entityToFind);
                 return manufacturerDto;

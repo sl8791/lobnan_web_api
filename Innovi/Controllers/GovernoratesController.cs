@@ -81,7 +81,7 @@ namespace Innovi.Controllers
         // POST: api/Governorates/Pagination
         [HttpPost]
         [Route("Pagination")]
-        public async Task<ActionResult<IEnumerable<GovernorateDto>>> GetWithPagination(GovernorateFilterDto filter)
+        public async Task<ActionResult<IEnumerable<GovernorateDto>>> GetWithPagination([FromQuery] GovernorateFilterDto filter)
         {
             try
             {
