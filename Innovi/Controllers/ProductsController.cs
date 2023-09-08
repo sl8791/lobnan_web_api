@@ -11,9 +11,11 @@ using Innovi.Services.Interfaces;
 using System.Collections;
 using Innovi.Models;
 using Innovi.Models.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Innovi.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase

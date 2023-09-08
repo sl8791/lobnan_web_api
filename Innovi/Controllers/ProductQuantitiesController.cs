@@ -10,9 +10,11 @@ using Innovi.Entities;
 using Innovi.Services.Interfaces;
 using Innovi.Services.Repository;
 using Innovi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Innovi.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductQuantitiesController : ControllerBase

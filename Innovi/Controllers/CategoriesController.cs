@@ -12,9 +12,11 @@ using Innovi.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections;
 using Innovi.Models.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Innovi.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase

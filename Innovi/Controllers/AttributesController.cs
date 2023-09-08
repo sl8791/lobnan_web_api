@@ -12,9 +12,11 @@ using Innovi.Services.Interfaces;
 using Castle.Components.DictionaryAdapter.Xml;
 using Innovi.Services.Repository;
 using Innovi.Models.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Innovi.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class AttributesController : ControllerBase
