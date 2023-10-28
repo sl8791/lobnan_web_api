@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Innovi.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductAttributesValuesController : ControllerBase
